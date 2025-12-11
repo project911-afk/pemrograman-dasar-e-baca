@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-BACA - Manajemen Perpustakaan</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="logo" onclick="showSection('dashboard')" style="cursor: pointer;">
+            <img src="img/logo1.png" alt="E-BACA Logo" class="logo-image">
+        </div>
+        <div class="menu">
+            <div class="menu-item active" onclick="showSection('dashboard')">
+                <span>🏠</span>
+                <span>Dashboard</span>
+            </div>
+            <div class="menu-item" onclick="showSection('buku')">
+                <span>📚</span>
+                <span>Manajemen Buku</span>
+            </div>
+            <div class="menu-item" onclick="showSection('anggota')">
+                <span>👥</span>
+                <span>Manajemen Anggota</span>
+            </div>
+            <div class="menu-item" onclick="showSection('peminjaman')">
+                <span>📤</span>
+                <span>Peminjaman</span>
+            </div>
+            <div class="menu-item" onclick="showSection('pengembalian')">
+                <span>📥</span>
+                <span>Pengembalian</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="header">
+            <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+            <h1>MANAJEMEN PERPUSTAKAAN</h1>
+        </div>
+
+        <!-- Content -->
+        <div class="content">
+            <!-- Dashboard Section -->
+            <div id="dashboard" class="section active">
+                <div class="page-title">
+                    <h2>Dashboard</h2>
+                    <p class="page-subtitle">📢 "Selamat datang di Sistem Manajemen Perpustakaan E-BACA – pastikan data diperbarui secara berkala."</p>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card purple">
+                        <h3 id="totalBuku">0</h3>
+                        <p>Jumlah Buku Tersedia</p>
+                        <button onclick="showSection('buku')">Lihat Detail</button>
+                    </div>
+                    <div class="stat-card blue">
+                        <h3 id="totalAnggota">0</h3>
+                        <p>Jumlah Anggota Terdaftar</p>
+                        <button onclick="showSection('anggota')">Lihat Detail</button>
+                    </div>
+                    <div class="stat-card green">
+                        <h3 id="bukuDipinjam">0</h3>
+                        <p>Jumlah Buku Dipinjam</p>
+                        <button onclick="showSection('peminjaman')">Lihat Detail</button>
+                    </div>
+                    <div class="stat-card gray">
+                        <h3 id="totalDenda">Rp0</h3>
+                        <p>Total Denda</p>
+                        <button onclick="showSection('pengembalian')">Lihat Detail</button>
+                    </div>
+                </div>
+
+                <div class="info-box">
+                    <h3>Peraturan Penggunaan Website Manajemen Peminjaman Buku</h3>
+                    <div class="info-grid">
+                        <div class="info-section">
+                            <h4>Akses dan Akun Pengguna</h4>
+                            <ul>
+                                <li>Pengguna wajib memiliki akun terdaftar untuk mengakses fitur peminjaman buku.</li>
+                                <li>Informasi akun seperti username dan password harus dijaga kerahasiaannya.</li>
+                                <li>Dilarang menggunakan akun milik orang lain atau membagikan akses login kepada pihak lain.</li>
+                            </ul>
+                        </div>
+                        <div class="info-section">
+                            <h4>Penggunaan Sistem</h4>
+                            <ul>
+                                <li>Seluruh peminjaman, pengembalian, dan perpanjangan buku dilakukan melalui sistem.</li>
+                                <li>Data yang diinput harus benar dan sesuai dengan identitas pengguna.</li>
+                                <li>Manipulasi data, pemalsuan identitas, atau penyalahgunaan fitur tidak diperbolehkan.</li>
+                            </ul>
+                        </div>
+                        <div class="info-section">
+                            <h4>Keamanan Data</h4>
+                            <ul>
+                                <li>Pengguna wajib memastikan perangkat yang digunakan aman dari malware atau pihak ketiga.</li>
+                                <li>Dilarang mencoba meretas, mengubah, atau merusak struktur sistem.</li>
+                                <li>Aktivitas pengguna akan tercatat dalam log untuk menjaga keamanan sistem.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Manajemen Buku Section -->
+            <div id="buku" class="section">
+                <div class="page-title">
+                    <h2>Manajemen Buku</h2>
+                    <p class="page-subtitle">Kelola data buku perpustakaan</p>
+                </div>
+
+                <div class="card">
+                    <h3>Tambah Buku Baru</h3>
+                    <div id="bukuAlert"></div>
+                    <form id="formBuku">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Judul Buku <span class="required">*</span></label>
+                                <input type="text" id="judulBuku" required placeholder="Masukkan judul buku">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Pengarang <span class="required">*</span></label>
+                                <input type="text" id="pengarangBuku" required placeholder="Masukkan nama pengarang">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Kategori <span class="required">*</span></label>
+                                <select id="kategoriBuku" required>
+                                    <option value="">-- Pilih Kategori --</option>
+                                    <option value="Fiksi">Fiksi</option>
+                                    <option value="Non-Fiksi">Non-Fiksi</option>
+                                    <option value="Pendidikan">Pendidikan</option>
+                                    <option value="Teknologi">Teknologi</option>
+                                    <option value="Sejarah">Sejarah</option>
+                                    <option value="Agama">Agama</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label>ISBN</label>
+                                <input type="text" id="isbnBuku" placeholder="978-xxx-xxxx">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Tahun Terbit</label>
+                                <input type="number" id="tahunBuku" min="1900" max="2025" placeholder="2024">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Status <span class="required">*</span></label>
+                                <div class="radio-group">
+                                    <label>
+                                        <input type="radio" name="statusBuku" value="Tersedia" checked>
+                                        Tersedia
+                                    </label>
+                                    <label>
+                                        <input type="radio" name="statusBuku" value="Dipinjam">
+                                        Dipinjam
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Kondisi Buku</label>
+                            <div class="checkbox-group">
+                                <label>
+                                    <input type="checkbox" name="kondisiBuku" value="Baru"> Baru
+                                </label>
+                                <label>
+                                    <input type="checkbox" name="kondisiBuku" value="Baik" checked> Baik
+                                </label>
+                                <label>
+                                    <input type="checkbox" name="kondisiBuku" value="Rusak"> Rusak
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="btn">Simpan Buku</button>
+                    </form>
+                </div>
+
+                <div class="card">
+                    <h3>Daftar Buku</h3>
+                    <div class="search-box">
+                        <input type="text" id="searchBuku" placeholder="🔍 Cari buku berdasarkan judul atau pengarang...">
+                    </div>
+                    <div style="overflow-x: auto;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Judul</th>
+                                    <th>Pengarang</th>
+                                    <th>Kategori</th>
+                                    <th>ISBN</th>
+                                    <th>Status</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="bukuList"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Manajemen Anggota Section -->
+            <div id="anggota" class="section">
+                <div class="page-title">
+                    <h2>Manajemen Anggota</h2>
+                    <p class="page-subtitle">Kelola data anggota perpustakaan</p>
+                </div>
+
+                <div class="card">
+                    <h3>Registrasi Anggota Baru</h3>
+                    <div id="anggotaAlert"></div>
+                    <form id="formAnggota">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Nama Lengkap <span class="required">*</span></label>
+                                <input type="text" id="namaAnggota" required placeholder="Masukkan nama lengkap">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Email <span class="required">*</span></label>
+                                <input type="email" id="emailAnggota" required placeholder="contoh@email.com">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>No. Telepon <span class="required">*</span></label>
+                                <input type="tel" id="telpAnggota" required placeholder="08xxxxxxxxxx">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Jenis Anggota <span class="required">*</span></label>
+                                <select id="jenisAnggota" required>
+                                    <option value="">-- Pilih Jenis --</option>
+                                    <option value="Mahasiswa">Mahasiswa</option>
+                                    <option value="Dosen">Dosen</option>
+                                    <option value="Umum">Umum</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Alamat</label>
+                            <textarea id="alamatAnggota" rows="3" placeholder="Masukkan alamat lengkap"></textarea>
+                        </div>
+                        
+                        <button type="submit" class="btn">Daftar Anggota</button>
+                    </form>
+                </div>
+
+                <div class="card">
+                    <h3>Daftar Anggota</h3>
+                    <div class="search-box">
+                        <input type="text" id="searchAnggota" placeholder="🔍 Cari anggota berdasarkan nama atau email...">
+                    </div>
+                    <div style="overflow-x: auto;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>No. Anggota</th>
+                                    <th>Nama</th>
+                                    <th>Email</th>
+                                    <th>Telepon</th>
+                                    <th>Jenis</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="anggotaList"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Peminjaman Section -->
+            <div id="peminjaman" class="section">
+                <div class="page-title">
+                    <h2>Sistem Peminjaman</h2>
+                    <p class="page-subtitle">Proses peminjaman buku perpustakaan</p>
+                </div>
+
+                <div class="card">
+                    <h3>Form Peminjaman Buku</h3>
+                    <div id="peminjamanAlert"></div>
+                    <form id="formPeminjaman">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Pilih Anggota <span class="required">*</span></label>
+                                <select id="anggotaPinjam" required>
+                                    <option value="">-- Pilih Anggota --</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Pilih Buku <span class="required">*</span></label>
+                                <select id="bukuPinjam" required>
+                                    <option value="">-- Pilih Buku --</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Tanggal Pinjam <span class="required">*</span></label>
+                                <input type="date" id="tglPinjam" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Durasi (hari) <span class="required">*</span></label>
+                                <input type="number" id="durasiPinjam" value="7" min="1" max="30" required>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="btn">Proses Peminjaman</button>
+                    </form>
+                </div>
+
+                <div class="card">
+                    <h3>Daftar Peminjaman Aktif</h3>
+                    <div style="overflow-x: auto;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Anggota</th>
+                                    <th>Buku</th>
+                                    <th>Tgl Pinjam</th>
+                                    <th>Jatuh Tempo</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="peminjamanList"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pengembalian Section -->
+            <div id="pengembalian" class="section">
+                <div class="page-title">
+                    <h2>Sistem Pengembalian</h2>
+                    <p class="page-subtitle">Proses pengembalian buku perpustakaan</p>
+                </div>
+
+                <div class="card">
+                    <h3>Form Pengembalian Buku</h3>
+                    <div id="pengembalianAlert"></div>
+                    <form id="formPengembalian">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Pilih Peminjaman <span class="required">*</span></label>
+                                <select id="peminjamanKembali" required>
+                                    <option value="">-- Pilih Peminjaman --</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Tanggal Kembali <span class="required">*</span></label>
+                                <input type="date" id="tglKembali" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Kondisi Buku Saat Kembali</label>
+                            <div class="radio-group">
+                                <label>
+                                    <input type="radio" name="kondisiKembali" value="Baik" checked>
+                                    Baik
+                                </label>
+                                <label>
+                                    <input type="radio" name="kondisiKembali" value="Rusak">
+                                    Rusak
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-success">Proses Pengembalian</button>
+                    </form>
+                </div>
+
+                <div class="card">
+                    <h3>Riwayat Pengembalian</h3>
+                    <div style="overflow-x: auto;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Anggota</th>
+                                    <th>Buku</th>
+                                    <th>Tgl Kembali</th>
+                                    <th>Keterlambatan</th>
+                                    <th>Denda</th>
+                                </tr>
+                            </thead>
+                            <tbody id="pengembalianList"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Footer -->
+        <footer class="footer">
+            Copyright © 2025 Fajar, Erix, Sony. All rights reserved.
+        </footer>
+    </div>
+
+    <script>
+        // Data Storage
+        let buku = [];
+        let anggota = [];
+        let peminjaman = [];
+        let pengembalian = [];
+
+        // Sidebar Toggle
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('show');
+        }
+
+        // Navigation
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
+            
+            document.getElementById(sectionId).classList.add('active');
+            event.target.closest('.menu-item').classList.add('active');
+            
+            if (window.innerWidth <= 768) {
+                document.getElementById('sidebar').classList.remove('show');
+            }
+            
+            if (sectionId === 'dashboard') updateDashboard();
+            if (sectionId === 'peminjaman') updatePeminjamanDropdowns();
+            if (sectionId === 'pengembalian') updatePengembalianDropdowns();
+        }
+
+        // Validasi Email
+        function validateEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
+        }
+
+        // Validasi Telepon
+        function validatePhone(phone) {
+            return phone.length >= 10 && /^\d+$/.test(phone);
+        }
+
+        // Capitalize Words
+        function capitalizeWords(str) {
+            return str.replace(/\b\w/g, l => l.toUpperCase());
+        }
+
+        // Generate ID
+        function generateId(prefix) {
+            return prefix + Date.now() + Math.floor(Math.random() * 1000);
+        }
+
+        // Show Alert
+        function showAlert(elementId, message, type) {
+            const alertDiv = document.getElementById(elementId);
+            alertDiv.innerHTML = `<div class="alert alert-${type}">${message}</div>`;
+            setTimeout(() => {
+                alertDiv.innerHTML = '';
+            }, 3000);
+        }
+
+        // Save to LocalStorage
+        function saveToStorage(key, data) {
+            localStorage.setItem(key, JSON.stringify(data));
+        }
+
+        // Load from LocalStorage
+        function loadFromStorage(key) {
+            const data = localStorage.getItem(key);
+            return data ? JSON.parse(data) : [];
+        }
+
+        // ===== MANAJEMEN BUKU =====
+        document.getElementById('formBuku').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const judul = document.getElementById('judulBuku').value.trim();
+            const pengarang = document.getElementById('pengarangBuku').value.trim();
+            const kategori = document.getElementById('kategoriBuku').value;
+            const isbn = document.getElementById('isbnBuku').value.trim();
+            const tahun = document.getElementById('tahunBuku').value;
+            const status = document.querySelector('input[name="statusBuku"]:checked').value;
+            
+            const kondisi = [];
+            document.querySelectorAll('input[name="kondisiBuku"]:checked').forEach(cb => {
+                kondisi.push(cb.value);
+            });
+
+            if (judul.length < 3) {
+                showAlert('bukuAlert', 'Judul buku minimal 3 karakter!', 'error');
+                return;
+            }
+
+            const bukuBaru = {
+                id: generateId('BK'),
+                judul: capitalizeWords(judul),
+                pengarang: capitalizeWords(pengarang),
+                kategori: kategori,
+                isbn: isbn || '-',
+                tahun: tahun || '-',
+                status: status,
+                kondisi: kondisi.length > 0 ? kondisi.join(', ') : 'Baik'
+            };
+
+            buku.push(bukuBaru);
+            saveToStorage('buku', buku);
+            
+            showAlert('bukuAlert', 'Buku berhasil ditambahkan!', 'success');
+            this.reset();
+            renderBuku();
+            updateDashboard();
+        });
+
+        function renderBuku() {
+            const tbody = document.getElementById('bukuList');
+            tbody.innerHTML = '';
+            
+            buku.forEach((b, index) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${b.judul}</td>
+                    <td>${b.pengarang}</td>
+                    <td>${b.kategori}</td>
+                    <td>${b.isbn}</td>
+                    <td><span style="color: ${b.status === 'Tersedia' ? 'green' : 'red'}">${b.status}</span></td>
+                    <td>
+                        <div class="action-btns">
+                            <button class="btn btn-small btn-danger" onclick="deleteBuku('${b.id}')">Hapus</button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function deleteBuku(id) {
+            if (confirm('Yakin ingin menghapus buku ini?')) {
+                buku = buku.filter(b => b.id !== id);
+                saveToStorage('buku', buku);
+                renderBuku();
+                updateDashboard();
+            }
+        }
+
+        // Search Buku
+        document.getElementById('searchBuku').addEventListener('input', function(e) {
+            const search = e.target.value.toLowerCase();
+            const filtered = buku.filter(b => 
+                b.judul.toLowerCase().includes(search) || 
+                b.pengarang.toLowerCase().includes(search)
+            );
+            
+            const tbody = document.getElementById('bukuList');
+            tbody.innerHTML = '';
+            
+            filtered.forEach((b, index) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${b.judul}</td>
+                    <td>${b.pengarang}</td>
+                    <td>${b.kategori}</td>
+                    <td>${b.isbn}</td>
+                    <td><span style="color: ${b.status === 'Tersedia' ? 'green' : 'red'}">${b.status}</span></td>
+                    <td>
+                        <div class="action-btns">
+                            <button class="btn btn-small btn-danger" onclick="deleteBuku('${b.id}')">Hapus</button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        });
+
+        // ===== MANAJEMEN ANGGOTA =====
+        document.getElementById('formAnggota').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const nama = document.getElementById('namaAnggota').value.trim();
+            const email = document.getElementById('emailAnggota').value.trim();
+            const telp = document.getElementById('telpAnggota').value.trim();
+            const alamat = document.getElementById('alamatAnggota').value.trim();
+            const jenis = document.getElementById('jenisAnggota').value;
+
+            if (nama.length < 3) {
+                showAlert('anggotaAlert', 'Nama minimal 3 karakter!', 'error');
+                return;
+            }
+
+            if (!validateEmail(email)) {
+                showAlert('anggotaAlert', 'Email tidak valid!', 'error');
+                return;
+            }
+
+            if (!validatePhone(telp)) {
+                showAlert('anggotaAlert', 'No. telepon tidak valid!', 'error');
+                return;
+            }
+
+            const anggotaBaru = {
+                id: generateId('AG'),
+                nama: capitalizeWords(nama),
+                email: email.toLowerCase(),
+                telp: telp,
+                alamat: alamat || '-',
+                jenis: jenis,
+                tanggalDaftar: new Date().toLocaleDateString('id-ID')
+            };
+
+            anggota.push(anggotaBaru);
+            saveToStorage('anggota', anggota);
+            
+            showAlert('anggotaAlert', 'Anggota berhasil terdaftar!', 'success');
+            this.reset();
+            renderAnggota();
+            updateDashboard();
+        });
+
+        function renderAnggota() {
+            const tbody = document.getElementById('anggotaList');
+            tbody.innerHTML = '';
+            
+            anggota.forEach((a) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${a.id}</td>
+                    <td>${a.nama}</td>
+                    <td>${a.email}</td>
+                    <td>${a.telp}</td>
+                    <td>${a.jenis}</td>
+                    <td>
+                        <div class="action-btns">
+                            <button class="btn btn-small btn-danger" onclick="deleteAnggota('${a.id}')">Hapus</button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function deleteAnggota(id) {
+            if (confirm('Yakin ingin menghapus anggota ini?')) {
+                anggota = anggota.filter(a => a.id !== id);
+                saveToStorage('anggota', anggota);
+                renderAnggota();
+                updateDashboard();
+            }
+        }
+
+        // Search Anggota
+        document.getElementById('searchAnggota').addEventListener('input', function(e) {
+            const search = e.target.value.toLowerCase();
+            const filtered = anggota.filter(a => 
+                a.nama.toLowerCase().includes(search) || 
+                a.email.toLowerCase().includes(search)
+            );
+            
+            const tbody = document.getElementById('anggotaList');
+            tbody.innerHTML = '';
+            
+            filtered.forEach((a) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${a.id}</td>
+                    <td>${a.nama}</td>
+                    <td>${a.email}</td>
+                    <td>${a.telp}</td>
+                    <td>${a.jenis}</td>
+                    <td>
+                        <div class="action-btns">
+                            <button class="btn btn-small btn-danger" onclick="deleteAnggota('${a.id}')">Hapus</button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        });
+
+        // ===== PEMINJAMAN =====
+        function updatePeminjamanDropdowns() {
+            const selectAnggota = document.getElementById('anggotaPinjam');
+            const selectBuku = document.getElementById('bukuPinjam');
+            
+            selectAnggota.innerHTML = '<option value="">-- Pilih Anggota --</option>';
+            anggota.forEach(a => {
+                selectAnggota.innerHTML += `<option value="${a.id}">${a.nama} (${a.id})</option>`;
+            });
+            
+            selectBuku.innerHTML = '<option value="">-- Pilih Buku --</option>';
+            buku.filter(b => b.status === 'Tersedia').forEach(b => {
+                selectBuku.innerHTML += `<option value="${b.id}">${b.judul} - ${b.pengarang}</option>`;
+            });
+        }
+
+        document.getElementById('formPeminjaman').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const anggotaId = document.getElementById('anggotaPinjam').value;
+            const bukuId = document.getElementById('bukuPinjam').value;
+            const tglPinjam = document.getElementById('tglPinjam').value;
+            const durasi = parseInt(document.getElementById('durasiPinjam').value);
+
+            const anggotaData = anggota.find(a => a.id === anggotaId);
+            const bukuData = buku.find(b => b.id === bukuId);
+
+            if (!anggotaData || !bukuData) {
+                showAlert('peminjamanAlert', 'Data tidak valid!', 'error');
+                return;
+            }
+
+            const tglPinjamDate = new Date(tglPinjam);
+            const tglJatuhTempo = new Date(tglPinjamDate);
+            tglJatuhTempo.setDate(tglJatuhTempo.getDate() + durasi);
+
+            const peminjamanBaru = {
+                id: generateId('PM'),
+                anggotaId: anggotaId,
+                anggotaNama: anggotaData.nama,
+                bukuId: bukuId,
+                bukuJudul: bukuData.judul,
+                tglPinjam: tglPinjam,
+                tglJatuhTempo: tglJatuhTempo.toISOString().split('T')[0],
+                durasi: durasi,
+                status: 'Aktif'
+            };
+
+            peminjaman.push(peminjamanBaru);
+            
+            bukuData.status = 'Dipinjam';
+            saveToStorage('buku', buku);
+            saveToStorage('peminjaman', peminjaman);
+            
+            showAlert('peminjamanAlert', 'Peminjaman berhasil diproses!', 'success');
+            this.reset();
+            renderPeminjaman();
+            renderBuku();
+            updateDashboard();
+        });
+
+        function renderPeminjaman() {
+            const tbody = document.getElementById('peminjamanList');
+            tbody.innerHTML = '';
+            
+            peminjaman.filter(p => p.status === 'Aktif').forEach(p => {
+                const today = new Date();
+                const jatuhTempo = new Date(p.tglJatuhTempo);
+                const isLate = today > jatuhTempo;
+                
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${p.id}</td>
+                    <td>${p.anggotaNama}</td>
+                    <td>${p.bukuJudul}</td>
+                    <td>${p.tglPinjam}</td>
+                    <td>${p.tglJatuhTempo}</td>
+                    <td><span style="color: ${isLate ? 'red' : 'green'}">${isLate ? 'Terlambat' : 'Aktif'}</span></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // ===== PENGEMBALIAN =====
+        function updatePengembalianDropdowns() {
+            const select = document.getElementById('peminjamanKembali');
+            select.innerHTML = '<option value="">-- Pilih Peminjaman --</option>';
+            
+            peminjaman.filter(p => p.status === 'Aktif').forEach(p => {
+                select.innerHTML += `<option value="${p.id}">${p.anggotaNama} - ${p.bukuJudul}</option>`;
+            });
+        }
+
+        document.getElementById('formPengembalian').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const peminjamanId = document.getElementById('peminjamanKembali').value;
+            const tglKembali = document.getElementById('tglKembali').value;
+            const kondisi = document.querySelector('input[name="kondisiKembali"]:checked').value;
+
+            const peminjamanData = peminjaman.find(p => p.id === peminjamanId);
+            if (!peminjamanData) {
+                showAlert('pengembalianAlert', 'Peminjaman tidak ditemukan!', 'error');
+                return;
+            }
+
+            const tglKembaliDate = new Date(tglKembali);
+            const tglJatuhTempoDate = new Date(peminjamanData.tglJatuhTempo);
+            
+            const diffTime = tglKembaliDate - tglJatuhTempoDate;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            const keterlambatan = diffDays > 0 ? diffDays : 0;
+            const denda = keterlambatan * 5000;
+
+            const pengembalianBaru = {
+                id: generateId('PG'),
+                peminjamanId: peminjamanId,
+                anggotaNama: peminjamanData.anggotaNama,
+                bukuJudul: peminjamanData.bukuJudul,
+                tglKembali: tglKembali,
+                keterlambatan: keterlambatan,
+                denda: denda,
+                kondisi: kondisi
+            };
+
+            pengembalian.push(pengembalianBaru);
+            
+            peminjamanData.status = 'Selesai';
+            
+            const bukuData = buku.find(b => b.id === peminjamanData.bukuId);
+            if (bukuData) {
+                bukuData.status = 'Tersedia';
+            }
+            
+            saveToStorage('peminjaman', peminjaman);
+            saveToStorage('pengembalian', pengembalian);
+            saveToStorage('buku', buku);
+            
+            const pesan = keterlambatan > 0 ? 
+                `Pengembalian berhasil! Denda: Rp ${denda.toLocaleString('id-ID')}` : 
+                'Pengembalian berhasil! Tidak ada denda';
+            
+            showAlert('pengembalianAlert', pesan, 'success');
+            this.reset();
+            renderPengembalian();
+            renderPeminjaman();
+            renderBuku();
+            updateDashboard();
+        });
+
+        function renderPengembalian() {
+            const tbody = document.getElementById('pengembalianList');
+            tbody.innerHTML = '';
+            
+            pengembalian.forEach(p => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${p.id}</td>
+                    <td>${p.anggotaNama}</td>
+                    <td>${p.bukuJudul}</td>
+                    <td>${p.tglKembali}</td>
+                    <td>${p.keterlambatan} hari</td>
+                    <td>Rp ${p.denda.toLocaleString('id-ID')}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // ===== DASHBOARD =====
+        function updateDashboard() {
+            document.getElementById('totalBuku').textContent = buku.length;
+            document.getElementById('totalAnggota').textContent = anggota.length;
+            document.getElementById('bukuDipinjam').textContent = buku.filter(b => b.status === 'Dipinjam').length;
+            
+            const totalDenda = pengembalian.reduce((sum, p) => sum + p.denda, 0);
+            document.getElementById('totalDenda').textContent = 'Rp ' + totalDenda.toLocaleString('id-ID');
+        }
+
+        // Initialize
+        window.addEventListener('load', function() {
+            buku = loadFromStorage('buku');
+            anggota = loadFromStorage('anggota');
+            peminjaman = loadFromStorage('peminjaman');
+            pengembalian = loadFromStorage('pengembalian');
+            
+            renderBuku();
+            renderAnggota();
+            renderPeminjaman();
+            renderPengembalian();
+            updateDashboard();
+            
+            // Set default dates
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('tglPinjam').value = today;
+            document.getElementById('tglKembali').value = today;
+        });
+    </script>
+</body>
+</html>
